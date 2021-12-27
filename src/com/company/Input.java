@@ -7,7 +7,9 @@ public class Input {
 
     // are in the class because the method that uses them isn't able to return a String and an int at the same time
     private int digitConvert;
-    private String letterConvert;
+
+    // gets start value in order to program don't crush in case user puts something wrong
+    private String letterConvert = "d";
 
     // is in the class in order to be able to print out the user's input in case of error caused by user's wrong input
     private String eingabe;
@@ -61,6 +63,7 @@ public class Input {
                             // for me to test [commented]
                             // System.out.println("case 1 works");
                             break;
+
                     }
 
 
@@ -103,7 +106,7 @@ public class Input {
     }
 
 
-// reads the y value (digit) and checks the whether the x value is suitable
+    // reads the y value (digit) and checks the whether the x value is suitable
     public void digitValueCheck() {
 
         while (true) {
@@ -156,6 +159,8 @@ public class Input {
 
                 case "n":
                 case "N":
+                case "No":
+                case "no":
                     PrintBoard.board[0][0] = CellValue.O;
 
                     System.out.println("The AI turns first:");
@@ -164,6 +169,8 @@ public class Input {
 
                 case "y":
                 case "Y":
+                case "Yes":
+                case "yes":
                     return 5;
             }
 
@@ -182,10 +189,14 @@ public class Input {
 
                 case "y":
                 case "Y":
+                case "Yes":
+                case "yes":
                     return false;
 
                 case "n":
                 case "N":
+                case "No":
+                case "no":
                     return true;
             }
 

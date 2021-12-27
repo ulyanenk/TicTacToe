@@ -39,39 +39,18 @@ public class Main {
             // start value for all cells
             PrintBoard.clearBoard();
 
-        // asks the user, who should turn first, and returns the quantity of turns, the games goes on
-        int turnsQuantity = input.firstTurnChoice(scan);
+            // asks the user, who should turn first, and returns the quantity of turns, the games goes on
+            int turnsQuantity = input.firstTurnChoice(scan);
 
 
-        System.out.println(" ");
-        System.out.println("      A   B   C");
-        System.out.println(" ");
-
-        System.out.println("  1   " + PrintBoard.board[0][0].getTag() + " |   |   ");
-        System.out.println("     ___|___|___");
-        System.out.println("  2     |   |   ");
-        System.out.println("     ___|___|___");
-        System.out.println("  3     |   |  " );
-        System.out.println("        |   |   ");
-
+            // prints out the board
+            PrintBoard.printField();
 
             // starts the game cycle
             for (int t = 0; t < turnsQuantity; t++) {
 
-
                 System.out.println(" ");
                 System.out.println("Your turn: ");
-
-/*
-            String eingabe = null;
-            while ((eingabe == null) || (eingabe.length() < 2)) {
-                // user types the cell number
-
-               // System.out.print("Your turn:");
-                eingabe = scan.nextLine();
-            }
-             */
-
 
                 // user has to type right cell value; the cycle repeats itself until the user types in the right value
                 input.digitValueCheck();
@@ -91,6 +70,7 @@ public class Main {
                 }
 
                 // if all cells are occupied, it's draw (happens if players makes turn first)
+                /*
                 if (ai.over(PrintBoard.board)) {
 
                     System.out.println(" ");
@@ -101,6 +81,7 @@ public class Main {
 
                     // System.exit(0);
                 }
+                 */
 
                 // checks whether the AI already has a scenario to deal the situation
                 // Scenarios.scenarioChoice(xValue, yValue);
@@ -141,7 +122,7 @@ public class Main {
             System.out.println(" ");
 
             // if draw, prints draw
-            if (!logic.victory(CellValue.O, PrintBoard.board) && !logic.victory(CellValue.X, PrintBoard.board)) {
+            if (ai.over(PrintBoard.board)) {
 
                 System.out.println("Draw");
                 System.out.println(" ");
@@ -162,6 +143,8 @@ public class Main {
             }
 
         }
+
+        // after the games are finally over
 
         System.out.println("Final score:");
         System.out.println(" ");
