@@ -33,7 +33,7 @@ public class Main {
         System.out.println("For example: b3  or  1c  or  A2");
         System.out.println(" ");
 
-
+        // one cycle one game
         while (true) {
 
             // start value for all cells
@@ -162,7 +162,7 @@ public class Main {
             System.out.println("Congratulations, you have won the whole campaign!");
         }
 
-        System.out.println(" ");
+        //System.out.println(" ");
         System.out.println("Game over");
        // System.out.println(" ");
     }

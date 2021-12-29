@@ -21,7 +21,7 @@ public class PrintBoard {
     }
 
 
-    // to test the AI (should be never used in end version)
+    // to test the AI (should be never used in the end version)
     public static void printVirtualBoard(CellValue[][] whichBoard) {
 
 
