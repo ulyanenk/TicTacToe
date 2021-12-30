@@ -53,7 +53,7 @@ public class Main {
                 System.out.println("Your turn: ");
 
                 // user has to type right cell value; the cycle repeats itself until the user types in the right value
-                input.digitValueCheck();
+                input.digitValueCheck(CellValue.X);
 
                 // prints out the board
                 PrintBoard.printField();
@@ -70,18 +70,15 @@ public class Main {
                 }
 
                 // if all cells are occupied, it's draw (happens if players makes turn first)
-                /*
                 if (ai.over(PrintBoard.board)) {
 
                     System.out.println(" ");
                     System.out.println("Draw");
-                    System.out.println(" ");
-                    System.out.println("Game over");
-                    System.out.println(" ");
-
-                    // System.exit(0);
+                   // System.out.println(" ");
+                   // System.out.println("Game over");
+                   // System.out.println(" ");
+                    break;
                 }
-                 */
 
                 // checks whether the AI already has a scenario to deal the situation
                 // Scenarios.scenarioChoice(xValue, yValue);
@@ -117,17 +114,18 @@ public class Main {
                     score[0]++;
                     break;
                 }
+
+                // if draw, prints draw
+                if (ai.over(PrintBoard.board)) {
+
+                    System.out.println("Draw");
+
+                    // the break isn't needed because the "for" cycle is used here, and he ends because the counter runs out
+                    //break;
+                }
             }
 
-            System.out.println(" ");
-
-            // if draw, prints draw
-            if (ai.over(PrintBoard.board)) {
-
-                System.out.println("Draw");
                 System.out.println(" ");
-            }
-
                 System.out.println("Score:");
                 System.out.println(" ");
                 System.out.println("AI | You");
@@ -162,7 +160,7 @@ public class Main {
             System.out.println("Congratulations, you have won the whole campaign!");
         }
 
-        //System.out.println(" ");
+        System.out.println(" ");
         System.out.println("Game over");
        // System.out.println(" ");
     }

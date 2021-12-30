@@ -107,7 +107,7 @@ public class Input {
 
 
     // reads the y value (digit) and checks the whether the x value is suitable
-    public void digitValueCheck() {
+    public void digitValueCheck(CellValue whoPlays) {
 
         while (true) {
 
@@ -127,7 +127,7 @@ public class Input {
                     if (PrintBoard.board[xValue][yValue].equals(CellValue.N)) {
 
                         // inserts the user's values in the board array
-                       PrintBoard.board[xValue][yValue] = CellValue.X;
+                       PrintBoard.board[xValue][yValue] = whoPlays;
                         break;
 
                     } else {
