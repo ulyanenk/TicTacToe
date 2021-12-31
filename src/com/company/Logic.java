@@ -2,6 +2,8 @@ package com.company;
 
 //import java.util.Scanner;
 
+import java.util.Scanner;
+
 public class Logic {
 
 
@@ -266,5 +268,31 @@ public class Logic {
         }
 
     }
+
+    public boolean firstTurnPlayer(Scanner scan) {
+
+        System.out.println("Who should start first? [x/o]");
+
+        while (true) {
+
+            String response = scan.nextLine();
+
+            switch (response) {
+
+                case "X":
+                case "x":
+                    return true;
+
+                case "O":
+                case "o":
+                case "0":
+                    return false;
+
+                default:
+                    System.out.println("Enter x or o");
+            }
+        }
+    }
+
 
 }

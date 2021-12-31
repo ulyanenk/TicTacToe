@@ -7,7 +7,7 @@ public class GameMode {
 
 
 
-    Scanner scan;
+    Scanner scan = new Scanner(System.in);
 
     // array that counts each victory of both players
     private final int[] score = {0, 0};
@@ -18,9 +18,9 @@ public class GameMode {
     }
 
     // a constructor
-    public GameMode(Scanner scan) {
+   /* public GameMode(Scanner scan) {
         this.scan = scan;
-    }
+    }*/
 
 
     private AI ai = new AI();
@@ -31,10 +31,6 @@ public class GameMode {
     public void basicRules() {
 
         System.out.println(" ");
-        System.out.println("Welcome to the Tic Tac Toe");
-        System.out.println(" ");
-
-
         System.out.println("Enter the cell numbers without spaces; just letter and digit at any way");
         System.out.println(" ");
         System.out.println("For example: b3  or  1c  or  A2");
@@ -44,7 +40,12 @@ public class GameMode {
     // user chooses difficulty; the return value is used by the game method
     public int chooseDifficulty() {
 
-        System.out.println("Choose difficulty: easy, normal or hard");
+        System.out.println("Choose difficulty:");
+        System.out.println("easy (1)");
+        System.out.println("normal (2)");
+        //System.out.println("hard (3)");
+        //System.out.println("   or");
+        System.out.println("two players (4)");
 
         while (true) {
 
@@ -53,23 +54,32 @@ public class GameMode {
             switch (difficultyChoice) {
 
                 case "easy":
+                case "1":
                     return 1;
 
                 case "normal":
+                case "2":
                     return 2;
 
                 //isn't written yet
                 //case "hard":
                     //return 3;
 
+                case "two":
+                case "two players":
+                case "4":
+                case "pvp":
+                case "PVP":
+                    return 4;
+
                 default:
-                    System.out.println("''" + difficultyChoice + "'' isn't valid difficulty level, type correctly");
+                    System.out.println("'" + difficultyChoice + "' isn't valid difficulty level, type correctly");
             }
         }
     }
 
     // converts to option into variable for usage in game method
-    private final int difficulty = chooseDifficulty();
+    public final int difficulty = chooseDifficulty();
 
 
     // the whole game process
@@ -84,7 +94,6 @@ public class GameMode {
 
             // asks the user, who should turn first, and returns the quantity of turns, the games goes on
             int turnsQuantity = input.firstTurnChoice(scan);
-
 
             // prints out the board
             PrintBoard.printField();
@@ -224,14 +233,45 @@ public class GameMode {
 
     public void twoPlayers() {
 
+        // these variables are needed to define the first player and count score correctly
+        CellValue firstPlayer;
+        CellValue secondPlayer;
+
+        int firstPlayerScore;
+        int secondPlayerScore;
+
+        //char firstPlayerChar;
+        //char secondPlayerChar;
+
         //one cycle - one game
         while (true) {
 
             // start value for all cells
             PrintBoard.clearBoard();
 
-            // asks the user, who should turn first, and returns the quantity of turns, the games goes on
-            //int turnsQuantity = input.firstTurnChoice(scan);
+            // asks the user, who should turn first; true: X turns first; false: O turns first
+            if (logic.firstTurnPlayer(scan)) {
+
+                firstPlayer = CellValue.X;
+                secondPlayer = CellValue.O;
+
+                firstPlayerScore = 1;
+                secondPlayerScore = 0;
+
+               // firstPlayerChar = 'X';
+               // secondPlayerChar = 'O';
+
+            } else {
+
+                firstPlayer = CellValue.O;
+                secondPlayer = CellValue.X;
+
+                firstPlayerScore = 0;
+                secondPlayerScore = 1;
+
+               // firstPlayerChar = 'O';
+               // secondPlayerChar = 'X';
+            }
 
 
             // prints out the board
@@ -241,21 +281,21 @@ public class GameMode {
             for (int t = 0; t < 5; t++) {
 
                 System.out.println(" ");
-                System.out.println("X's turn: ");
+                System.out.println(firstPlayer.getTag() + "'s turn: ");
 
                 // user has to type right cell value; the cycle repeats itself until the user types in the right value
-                input.digitValueCheck(CellValue.X);
+                input.digitValueCheck(firstPlayer);
 
                 // prints out the board
                 PrintBoard.printField();
 
                 // checks the whether the user has won this turn
-                if (logic.victory(CellValue.X, PrintBoard.board)) {
+                if (logic.victory(firstPlayer, PrintBoard.board)) {
 
                     System.out.println(" ");
-                    System.out.println("X player wins");
+                    System.out.println(firstPlayer.getTag() + " player wins");
 
-                    score[1]++;
+                    score[firstPlayerScore]++;
 
                     break;
                 }
@@ -270,21 +310,21 @@ public class GameMode {
 
 
                 System.out.println(" ");
-                System.out.println("O's turn: ");
+                System.out.println(secondPlayer.getTag() + "'s turn: ");
 
                 // user has to type right cell value; the cycle repeats itself until the user types in the right value
-                input.digitValueCheck(CellValue.X);
+                input.digitValueCheck(secondPlayer);
 
                 // prints out the board
                 PrintBoard.printField();
 
                 // checks the whether the user has won this turn
-                if (logic.victory(CellValue.X, PrintBoard.board)) {
+                if (logic.victory(secondPlayer, PrintBoard.board)) {
 
                     System.out.println(" ");
-                    System.out.println("O player wins");
+                    System.out.println(secondPlayer.getTag() + " player wins");
 
-                    score[0]++;
+                    score[secondPlayerScore]++;
 
                     break;
                 }

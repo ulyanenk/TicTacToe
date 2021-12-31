@@ -2,7 +2,7 @@ package com.company;
 
 public enum CellValue {
 
-    X("x"),
+    X("X"),
     O("O"),
     N(" ");
 
