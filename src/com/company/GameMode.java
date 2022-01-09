@@ -38,12 +38,12 @@ public class GameMode {
     }
 
     // user chooses difficulty; the return value is used by the game method
-    public int chooseDifficulty() {
+    private int chooseDifficulty() {
 
         System.out.println("Choose difficulty:");
         System.out.println("easy (1)");
         System.out.println("normal (2)");
-        //System.out.println("hard (3)");
+        System.out.println("hard (3) (isn't written yet)");
         //System.out.println("   or");
         System.out.println("two players (4)");
 
@@ -62,8 +62,12 @@ public class GameMode {
                     return 2;
 
                 //isn't written yet
-                //case "hard":
+                case "hard":
+                case "3":
+                    System.out.println("Hard difficulty isn't written yet unfortunately :(");
+                    System.out.println("Choose another one");
                     //return 3;
+                    continue;
 
                 case "two":
                 case "two players":
@@ -78,13 +82,12 @@ public class GameMode {
         }
     }
 
-    // converts to option into variable for usage in game method
+    // converts the option into variable for usage in game method
     public final int difficulty = chooseDifficulty();
 
 
     // the whole game process
     public void againstAI() {
-
 
         //one cycle - one game
         while (true) {

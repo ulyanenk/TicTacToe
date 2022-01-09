@@ -26,13 +26,11 @@ public class Main {
         if (gameMode.difficulty == 4) {
 
             gameMode.basicRules();
-
             gameMode.twoPlayers();
 
         } else {
 
             gameMode.basicRules();
-
             gameMode.againstAI();
         }
 

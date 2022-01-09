@@ -11,7 +11,7 @@ public class PrintBoard {
         System.out.println("      A   B   C");
         System.out.println(" ");
 
-        System.out.println(" 1    " +  board[0][0].getTag() + " | " + board[1][0].getTag() + " | " + board[2][0].getTag());
+        System.out.println(" 1    " + board[0][0].getTag() + " | " + board[1][0].getTag() + " | " + board[2][0].getTag());
         System.out.println("     ___|___|___");
         System.out.println(" 2    " + board[0][1].getTag() + " | " + board[1][1].getTag() + " | " + board[2][1].getTag());
         System.out.println("     ___|___|___");
