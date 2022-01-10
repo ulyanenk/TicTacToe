@@ -65,7 +65,7 @@ public class GameMode {
                 case "hard":
                 case "3":
                     System.out.println("Hard difficulty isn't written yet unfortunately :(");
-                    System.out.println("Choose another one");
+                    System.out.println("Choose another one:");
                     //return 3;
                     continue;
 
@@ -113,7 +113,7 @@ public class GameMode {
                 // prints out the board
                 PrintBoard.printField();
 
-                // checks the whether the user has won this turn
+                // checks the whether the user has won this turn or if all cells are occupied, it's draw
                 if (logic.victory(CellValue.X, PrintBoard.board)) {
 
                     System.out.println(" ");
@@ -122,10 +122,8 @@ public class GameMode {
                     score[1]++;
 
                     break;
-                }
 
-                // if all cells are occupied, it's draw (happens if players makes turn first)
-                if (ai.over(PrintBoard.board)) {
+                } else if (ai.over(PrintBoard.board)) {
 
                     System.out.println(" ");
                     System.out.println("Draw");
@@ -170,7 +168,7 @@ public class GameMode {
                 // prints ot the board
                 PrintBoard.printField();
 
-                // checks whether the AI has won this turn
+                // checks whether the AI has won this turn or if all cells are occupied, it's draw
                 if (logic.victory(CellValue.O, PrintBoard.board)) {
 
                     System.out.println(" ");
@@ -178,18 +176,24 @@ public class GameMode {
 
                     score[0]++;
                     break;
+
+                } else if (ai.over(PrintBoard.board)) {
+
+                    System.out.println(" ");
+                    System.out.println("Draw");
+                    break;
                 }
             }
 
-            System.out.println(" ");
 
             // if draw, prints draw
-            if (ai.over(PrintBoard.board)) {
+            /*if (ai.over(PrintBoard.board)) {
 
-                System.out.println("Draw");
                 System.out.println(" ");
-            }
+                System.out.println("Draw");
+            }*/
 
+            System.out.println(" ");
             System.out.println("Score:");
             System.out.println(" ");
             System.out.println("AI | You");

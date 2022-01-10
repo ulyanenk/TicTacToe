@@ -294,5 +294,29 @@ public class Logic {
         }
     }
 
+    public void firstTurnCornerRandom() {
+
+        // AI makes first in one of the corners
+        int thisTurn = (int) (Math.random() * 4) + 1;
+
+        switch (thisTurn) {
+
+            case 1:
+                PrintBoard.board[0][0] = CellValue.O;
+                break;
+
+            case 2:
+                PrintBoard.board[2][0] = CellValue.O;
+                break;
+
+            case 3:
+                PrintBoard.board[0][2] = CellValue.O;
+                break;
+
+            case 4:
+                PrintBoard.board[2][2] = CellValue.O;
+        }
+    }
+
 
 }

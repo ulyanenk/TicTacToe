@@ -1,5 +1,8 @@
 package com.company;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class AI {
 
     // creates new virtual board
@@ -12,7 +15,7 @@ public class AI {
 
         // first loop, repeats until every game for every turn is completed
         // second and third loops are listing each cell of the board
-        for (int gamesPerCell = 0; gamesPerCell < 50; gamesPerCell++) {
+        for (int gamesPerCell = 0; gamesPerCell < 150; gamesPerCell++) {
             for (int i = 0; i < 3; i++) {
                 for (int j = 2; j >= 0; j--) {
 
@@ -87,47 +90,25 @@ public class AI {
 
         Logic logic = new Logic();
 
+        Set<CellValue[][]> gameSaver = new HashSet<>();
+
+        //makes the first turn
+        virtualBoard[x][y] = CellValue.O;
+
+        // for me to test the virtual games [commented]
+        PrintBoard.printVirtualBoard(virtualBoard);
+
+        // one virtual game
         while (true) {
 
             // one turn start
-
-            // the "O" computer turn (the virtual computer AI)
-            // first: the AI checks, whether it's able to finish game this turn, if yes, the AI turns there
-            //arguments: (forWhom, whichBoard, whoPlays)
-            if (!logic.victoryCheck(CellValue.O, virtualBoard, CellValue.O)) {
-
-                // second: the AI checks, whether user is able to finish game this turn, if yes, the AI turns there
-                //arguments: (forWhom, whichBoard, whoPlays)
-                if (!logic.victoryCheck(CellValue.X, virtualBoard, CellValue.O)) {
-
-                    // last: if after the analysis there is no move the AI could do, he just moves randomly
-                    logic.randomTurn(virtualBoard, CellValue.O);
-                }
-            }
-
-            // for me to test the virtual games [commented]
-            // PrintBoard.printVirtualBoard(virtualBoard);
-
-            if (logic.victory(CellValue.O, virtualBoard)) {
-
-                victoryCounter[x][y]++;
-
-                // for me to test the virtual games [commented]
-                // System.out.println("victory");
-
-                break;
-
-            } else if (over(virtualBoard)) {
-
-                break;
-            }
 
             // the "X" computer turn (the virtual player AI)
             // first: the AI checks, whether it's able to finish game this turn, if yes, the AI turns there
             //arguments: (forWhom, whichBoard, whoPlays)
             if (!logic.victoryCheck(CellValue.X, virtualBoard, CellValue.X)) {
 
-                // second: the AI checks, whether user is able to finish game this turn, if yes, the AI turns there
+                // second: the AI checks, whether the enemy is able to finish game this turn, if yes, the AI turns there
                 //arguments: (forWhom, whichBoard, whoPlays)
                 if (!logic.victoryCheck(CellValue.O, virtualBoard, CellValue.X)) {
 
@@ -137,31 +118,72 @@ public class AI {
             }
 
             // for me to test the virtual games [commented]
-            // PrintBoard.printVirtualBoard(virtualBoard);
+            PrintBoard.printVirtualBoard(virtualBoard);
 
             if (logic.victory(CellValue.X, virtualBoard)) {
 
-                victoryCounter[x][y]--;
+                if (!gameSaver.contains(virtualBoard)) {
 
+                    victoryCounter[x][y]--;
+
+                    // for me to test the virtual games [commented]
+                    System.out.println("that counts");
+                }
                 // for me to test the virtual games [commented]
-                // System.out.println("defeat");
-
+                System.out.println("defeat");
                 break;
 
             } else if (over(virtualBoard)) {
+                break;
+            }
 
+
+            // the "O" computer turn (the virtual computer AI)
+            // first: the AI checks, whether it's able to finish game this turn, if yes, the AI turns there
+            //arguments: (forWhom, whichBoard, whoPlays)
+            if (!logic.victoryCheck(CellValue.O, virtualBoard, CellValue.O)) {
+
+                // second: the AI checks, whether the enemy is able to finish game this turn, if yes, the AI turns there
+                //arguments: (forWhom, whichBoard, whoPlays)
+                if (!logic.victoryCheck(CellValue.X, virtualBoard, CellValue.O)) {
+
+                    // last: if after the analysis there is no move the AI could do, he just moves randomly
+                    logic.randomTurn(virtualBoard, CellValue.O);
+                }
+            }
+
+            // for me to test the virtual games [commented]
+            PrintBoard.printVirtualBoard(virtualBoard);
+
+            if (logic.victory(CellValue.O, virtualBoard)) {
+
+                if (!gameSaver.contains(virtualBoard)) {
+
+                    victoryCounter[x][y]++;
+
+                    // for me to test the virtual games [commented]
+                    System.out.println("that counts");
+                }
+                // for me to test the virtual games [commented]
+                System.out.println("victory");
+                break;
+
+            } else if (over(virtualBoard)) {
                 break;
             }
 
             // one turn over
         }
 
+        // saves one played game into the set in order to not count the equal games in the victoryCounter twice
+        gameSaver.add(virtualBoard);
+
         // after one virtual game is over the virtual board gets "cleared" (every cell gets "N"(empty) value)
         for(int i = 0; i < 3; i++){
             for(int j = 2; j >= 0; j--) {
 
                 // for me to test [commented]
-                // System.out.println(i + " " + j + ": the current victory counter: " + victoryCounter[i][j]);
+                System.out.println(i + " " + j + ": the current victory counter: " + victoryCounter[i][j]);
 
                 virtualBoard[i][j] = CellValue.N;
 

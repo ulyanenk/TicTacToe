@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class Main {
 
 
-     static Scanner scan = new Scanner(System.in);
+     public static Scanner scan = new Scanner(System.in);
 
     // score counter; slot 0 computer, slot 1 user
    // static int[] score = {0, 0};

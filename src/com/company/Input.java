@@ -149,6 +149,8 @@ public class Input {
     // asks who shall turn first
     public int firstTurnChoice(Scanner firstTurnChoiceInputScan) {
 
+        Logic logic = new Logic();
+
         System.out.println("Would you like to turn first? [y/n]");
 
         while (true) {
@@ -161,7 +163,8 @@ public class Input {
                 case "N":
                 case "No":
                 case "no":
-                    PrintBoard.board[0][0] = CellValue.O;
+
+                    logic.firstTurnCornerRandom();
 
                     System.out.println("The AI turns first:");
                     System.out.println(" ");
