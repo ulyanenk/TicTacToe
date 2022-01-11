@@ -1,4 +1,7 @@
-package com.company;
+package useless;
+
+import console.PrintBoard;
+import logics.CellValue;
 
 public class Scenarios {
 

@@ -1,10 +1,15 @@
-package com.company;
+package com;
+
+import console.Input;
+import console.PrintBoard;
+import logics.AI;
+import logics.CellValue;
+import logics.Logic;
 
 import java.util.Scanner;
 
 
 public class GameMode {
-
 
 
     Scanner scan = new Scanner(System.in);
@@ -43,7 +48,7 @@ public class GameMode {
         System.out.println("Choose difficulty:");
         System.out.println("easy (1)");
         System.out.println("normal (2)");
-        System.out.println("hard (3) (isn't written yet)");
+        System.out.println("hard (3)");
         //System.out.println("   or");
         System.out.println("two players (4)");
 
@@ -61,13 +66,11 @@ public class GameMode {
                 case "2":
                     return 2;
 
-                //isn't written yet
                 case "hard":
                 case "3":
-                    System.out.println("Hard difficulty isn't written yet unfortunately :(");
-                    System.out.println("Choose another one:");
-                    //return 3;
-                    continue;
+                    //System.out.println("Hard difficulty isn't written yet unfortunately :(");
+                    //System.out.println("Choose another one:");
+                    return 3;
 
                 case "two":
                 case "two players":
@@ -150,8 +153,9 @@ public class GameMode {
                                 break;
 
                             case 2:
-                                // [normal] AI uses his victory value for each cell algorithm
-                                ai.selfPlay();
+                            case 3:
+                                // [normal] or [hard] AI uses his victory value for each cell algorithm
+                                ai.selfPlay(difficulty);
                                 break;
 
                             // isn't written yet

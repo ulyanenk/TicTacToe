@@ -1,6 +1,8 @@
-package com.company;
+package logics;
 
 //import java.util.Scanner;
+
+import console.PrintBoard;
 
 import java.util.Scanner;
 
@@ -317,6 +319,5 @@ public class Logic {
                 PrintBoard.board[2][2] = CellValue.O;
         }
     }
-
 
 }

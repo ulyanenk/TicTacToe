@@ -1,4 +1,8 @@
-package com.company;
+package console;
+
+import com.Main;
+import logics.CellValue;
+import logics.Logic;
 
 import java.util.Scanner;
 

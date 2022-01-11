@@ -1,4 +1,4 @@
-package com.company;
+package useless;
 
 
 public class CallCoordinates {

@@ -1,4 +1,4 @@
-package com.company;
+package logics;
 
 public enum CellValue {
 
@@ -13,7 +13,7 @@ public enum CellValue {
 
     private String tag;
 
-    String getTag(){
+    public String getTag(){
         return tag;
     }
 

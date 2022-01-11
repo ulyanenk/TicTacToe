@@ -1,4 +1,6 @@
-package com.company;
+package console;
+
+import logics.CellValue;
 
 public class PrintBoard {
 
@@ -50,6 +52,19 @@ public class PrintBoard {
             }
         }
 
+    }
+
+    public static void clearAnyBoard(CellValue[][] whichBoard) {
+
+        // after one virtual game is over the virtual board gets "cleared" (every cell gets "N"(empty) value)
+        for(int i = 0; i < 3; i++){
+            for(int j = 2; j >= 0; j--) {
+
+                whichBoard[i][j] = CellValue.N;
+
+                // System.out.println(board[i][j].getTag());
+            }
+        }
     }
 
 }
