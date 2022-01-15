@@ -156,7 +156,7 @@ public class Logic {
     // the method checks the victory possibility this turn in dependence of the faction
     // if forWhom and player have the same value, the AI checks the possible victory for himself
     // if forWhom and player have the different values, the AI checks the possible victory for his opponent
-    public boolean victoryCheck(CellValue forWhom, CellValue[][] whichBoard, CellValue player) {
+    public boolean victoryNow(CellValue forWhom, CellValue[][] whichBoard, CellValue player) {
 
         // creates new virtual board
         CellValue[][] virtualBoard = new CellValue[PrintBoard.board.length][PrintBoard.board.length];

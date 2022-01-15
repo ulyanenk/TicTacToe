@@ -54,7 +54,7 @@ public class PrintBoard {
 
     }
 
-    public static void clearAnyBoard(CellValue[][] whichBoard) {
+    public static void clearBoard(CellValue[][] whichBoard) {
 
         // after one virtual game is over the virtual board gets "cleared" (every cell gets "N"(empty) value)
         for(int i = 0; i < 3; i++){

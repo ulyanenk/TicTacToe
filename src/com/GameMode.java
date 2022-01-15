@@ -105,7 +105,7 @@ public class GameMode {
             PrintBoard.printField();
 
             // starts the game cycle
-            for (int t = 0; t < turnsQuantity; t++) {
+            while (true)/*for (int t = 0; t < turnsQuantity; t++)*/ {
 
                 System.out.println(" ");
                 System.out.println("Your turn: ");
@@ -139,10 +139,10 @@ public class GameMode {
 
 
                 // first: the AI checks, whether it's able to finish game this turn, if yes, the AI turns there
-                if (!logic.victoryCheck(CellValue.O, PrintBoard.board, CellValue.O)) {
+                if (!logic.victoryNow(CellValue.O, PrintBoard.board, CellValue.O)) {
 
                     // second: the AI checks, whether user is able to finish game this turn, if yes, the AI turns there
-                    if (!logic.victoryCheck(CellValue.X, PrintBoard.board, CellValue.O)) {
+                    if (!logic.victoryNow(CellValue.X, PrintBoard.board, CellValue.O)) {
 
                         // last: if after the analysis there is no move the AI could do, he uses an algorithm in dependence of the difficulty level
                         switch (difficulty) {

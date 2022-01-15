@@ -73,7 +73,7 @@ public class Scenarios {
       */
     }
 
-    private static boolean nearFlankT1(int x, int y){
+    private boolean nearFlankT1(int x, int y){
 
         if(x == 1 && y == 0) {
 
