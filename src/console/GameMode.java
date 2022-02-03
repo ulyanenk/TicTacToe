@@ -1,7 +1,6 @@
-package com;
+package console;
 
-import console.Input;
-import console.PrintBoard;
+import logics.Board;
 import logics.AI;
 import logics.CellValue;
 import logics.Logic;
@@ -10,7 +9,6 @@ import java.util.Scanner;
 
 
 public class GameMode {
-
 
     Scanner scan = new Scanner(System.in);
 
@@ -29,7 +27,7 @@ public class GameMode {
 
 
     private AI ai = new AI();
-    private Input input = new Input();
+    private Input input = new Input(scan);
     private Logic logic = new Logic();
 
 
@@ -92,17 +90,21 @@ public class GameMode {
     // the whole game process
     public void againstAI() {
 
+        String oneGame = ""; // saves one played game
+
         //one cycle - one game
         while (true) {
 
+            int turnNumber = 0;
+
             // start value for all cells
-            PrintBoard.clearBoard();
+            Board.clearBoard();
 
             // asks the user, who should turn first, and returns the quantity of turns, the games goes on
             int turnsQuantity = input.firstTurnChoice(scan);
 
             // prints out the board
-            PrintBoard.printField();
+            Board.printField();
 
             // starts the game cycle
             while (true)/*for (int t = 0; t < turnsQuantity; t++)*/ {
@@ -111,101 +113,95 @@ public class GameMode {
                 System.out.println("Your turn: ");
 
                 // user has to type right cell value; the cycle repeats itself until the user types in the right value
-                input.digitValueCheck(CellValue.X);
+                String currentTurn = input.digitValueCheck(CellValue.X); //saves the turn coordinates into String
+                char turnType = 'U';
+
+                turnNumber++;                                           // counts which turn is now, in order sort the turns chronologically later
+                oneGame += (turnNumber + currentTurn + turnType + " "); // adds all turn info to the game String
+                currentTurn = null;                                     // "clears" the currentTurn
 
                 // prints out the board
-                PrintBoard.printField();
+                Board.printField();
 
                 // checks the whether the user has won this turn or if all cells are occupied, it's draw
-                if (logic.victory(CellValue.X, PrintBoard.board)) {
+                if (logic.victory(CellValue.X, Board.realBoard)) {
 
-                    System.out.println(" ");
-                    System.out.println("Congratulations, you won!!!");
+                    System.out.println("\nCongratulations, you won!!!");
 
                     score[1]++;
-
                     break;
 
-                } else if (ai.over(PrintBoard.board)) {
+                } else if (ai.over(Board.realBoard)) {
 
-                    System.out.println(" ");
-                    System.out.println("Draw");
+                    System.out.println("\nDraw");
                     break;
                 }
-
 
                 // checks whether the AI already has a scenario to deal the situation
                 // Scenarios.scenarioChoice(xValue, yValue);
 
 
                 // first: the AI checks, whether it's able to finish game this turn, if yes, the AI turns there
-                if (!logic.victoryNow(CellValue.O, PrintBoard.board, CellValue.O)) {
+                currentTurn = logic.victoryNow(CellValue.O, Board.realBoard, CellValue.O);
+                turnType = 'V';
+
+                if (currentTurn == null) {
 
                     // second: the AI checks, whether user is able to finish game this turn, if yes, the AI turns there
-                    if (!logic.victoryNow(CellValue.X, PrintBoard.board, CellValue.O)) {
+                    currentTurn = logic.victoryNow(CellValue.X, Board.realBoard, CellValue.O);
+                    turnType = 'P';
+
+                    if (currentTurn == null) {
 
                         // last: if after the analysis there is no move the AI could do, he uses an algorithm in dependence of the difficulty level
+                        turnType = 'F';
+
                         switch (difficulty) {
 
                             case 1:
                                 // [easy] AI just moves randomly
-                                logic.randomTurn(PrintBoard.board, CellValue.O);
+                                currentTurn = logic.randomTurn(Board.realBoard, CellValue.O);
                                 break;
 
                             case 2:
                             case 3:
                                 // [normal] or [hard] AI uses his victory value for each cell algorithm
-                                ai.selfPlay(difficulty);
+                                currentTurn = ai.selfPlay(difficulty);
                                 break;
-
-                            // isn't written yet
-                            //case 3:
-                            // [hard]
                         }
                     }
                 }
 
+                turnNumber++; // counts which turn is now, in order sort the turns chronologically later
+                oneGame += (turnNumber + currentTurn + turnType + " "); // adds all turn info to the game String
+                currentTurn = null; // "clears" the currentTurn
 
-                System.out.println(" ");
-                System.out.println("The AI's turn:");
+                System.out.println("\nThe AI's turn:");
 
                 // prints ot the board
-                PrintBoard.printField();
+                Board.printField();
 
                 // checks whether the AI has won this turn or if all cells are occupied, it's draw
-                if (logic.victory(CellValue.O, PrintBoard.board)) {
+                if (logic.victory(CellValue.O, Board.realBoard)) {
 
-                    System.out.println(" ");
-                    System.out.println("You lost!!!");
+                    System.out.println("\nYou lost!!!");
 
                     score[0]++;
                     break;
 
-                } else if (ai.over(PrintBoard.board)) {
+                } else if (ai.over(Board.realBoard)) {
 
-                    System.out.println(" ");
-                    System.out.println("Draw");
+                    System.out.println("\nDraw");
                     break;
                 }
             }
 
-
-            // if draw, prints draw
-            /*if (ai.over(PrintBoard.board)) {
-
-                System.out.println(" ");
-                System.out.println("Draw");
-            }*/
-
-            System.out.println(" ");
-            System.out.println("Score:");
-            System.out.println(" ");
+            System.out.println("\nScore:\n");
             System.out.println("AI | You");
             System.out.println("   |");
             System.out.println(score[0] +  "  |  " + score[1]);
-            System.out.println(" ");
 
-            System.out.println("Would you like to play again? [y/n]");
+            System.out.println("\nWould you like to play again? [y/n]");
 
             // if user doesn't want to play again, "if" breaks the game loop
             if (input.playAgain(scan)) {
@@ -230,15 +226,13 @@ public class GameMode {
         } else if (score[0] < score[1]) {
 
             System.out.println("Congratulations, you have won the whole campaign!");
-        }
 
-        else {
+        } else {
 
             System.out.println("Draw");
         }
 
-        System.out.println(" ");
-        System.out.println("Game over");
+        System.out.println("\nGame over");
         // System.out.println(" ");
     }
 
@@ -258,7 +252,7 @@ public class GameMode {
         while (true) {
 
             // start value for all cells
-            PrintBoard.clearBoard();
+            Board.clearBoard();
 
             // asks the user, who should turn first; true: X turns first; false: O turns first
             if (logic.firstTurnPlayer(scan)) {
@@ -286,7 +280,7 @@ public class GameMode {
 
 
             // prints out the board
-            PrintBoard.printField();
+            Board.printField();
 
             // starts the game cycle
             for (int t = 0; t < 5; t++) {
@@ -298,10 +292,10 @@ public class GameMode {
                 input.digitValueCheck(firstPlayer);
 
                 // prints out the board
-                PrintBoard.printField();
+                Board.printField();
 
                 // checks the whether the user has won this turn
-                if (logic.victory(firstPlayer, PrintBoard.board)) {
+                if (logic.victory(firstPlayer, Board.realBoard)) {
 
                     System.out.println(" ");
                     System.out.println(firstPlayer.getTag() + " player wins");
@@ -312,10 +306,9 @@ public class GameMode {
                 }
 
                 // if all cells are occupied, it's draw
-                if (ai.over(PrintBoard.board)) {
+                if (ai.over(Board.realBoard)) {
 
-                    System.out.println(" ");
-                    System.out.println("Draw");
+                    System.out.println("\nDraw");
                     break;
                 }
 
@@ -327,10 +320,10 @@ public class GameMode {
                 input.digitValueCheck(secondPlayer);
 
                 // prints out the board
-                PrintBoard.printField();
+                Board.printField();
 
                 // checks the whether the user has won this turn
-                if (logic.victory(secondPlayer, PrintBoard.board)) {
+                if (logic.victory(secondPlayer, Board.realBoard)) {
 
                     System.out.println(" ");
                     System.out.println(secondPlayer.getTag() + " player wins");
@@ -341,19 +334,15 @@ public class GameMode {
                 }
 
                 // if all cells are occupied, it's draw
-                if (ai.over(PrintBoard.board)) {
+                if (ai.over(Board.realBoard)) {
 
-                    System.out.println(" ");
-                    System.out.println("Draw");
+                    System.out.println("\nDraw");
                     break;
                 }
 
             }
 
-
-            System.out.println(" ");
-            System.out.println("Score:");
-            System.out.println(" ");
+            System.out.println("\nScore:\n");
             System.out.println("O | X");
             System.out.println("  |");
             System.out.println(score[0] +  " | " + score[1]);
@@ -390,12 +379,7 @@ public class GameMode {
 
             System.out.println("Draw, none of you is better than another one");
         }
-
-        System.out.println(" ");
-        System.out.println("Game over");
-        // System.out.println(" ");
-
-
+        System.out.println("\nGame over");
         }
 
 

@@ -1,9 +1,5 @@
 package logics;
 
-//import java.util.Scanner;
-
-import console.PrintBoard;
-
 import java.util.Scanner;
 
 public class Logic {
@@ -82,7 +78,7 @@ public class Logic {
     // the method is used to check whether one of the players has finished the game this turn, if yes says it and closes the program
      public boolean victoryText(CellValue winner) {
 
-        if (victory(winner, PrintBoard.board)) {
+        if (victory(winner, Board.realBoard)) {
 
             System.out.println(" ");
 
@@ -156,10 +152,10 @@ public class Logic {
     // the method checks the victory possibility this turn in dependence of the faction
     // if forWhom and player have the same value, the AI checks the possible victory for himself
     // if forWhom and player have the different values, the AI checks the possible victory for his opponent
-    public boolean victoryNow(CellValue forWhom, CellValue[][] whichBoard, CellValue player) {
+    public String victoryNow(CellValue forWhom, CellValue[][] whichBoard, CellValue player) {
 
         // creates new virtual board
-        CellValue[][] virtualBoard = new CellValue[PrintBoard.board.length][PrintBoard.board.length];
+        CellValue[][] virtualBoard = new CellValue[Board.realBoard.length][Board.realBoard.length];
 
         int xValueAI;
         int yValueAI;
@@ -203,7 +199,7 @@ public class Logic {
 
                 // for me to test this function [commented]
                 // System.out.println("The victoryChecks has worked");
-                return true;
+                return ("[" + xValueAI + ":" + yValueAI + "]");
             }
             //for me to test the whole function [commented]
            // else {
@@ -211,10 +207,10 @@ public class Logic {
 
             }
         }
-       return false;
+       return null;
     }
 
-    public void randomTurn(CellValue[][] whichBoard, CellValue player) {
+    public String randomTurn(CellValue[][] whichBoard, CellValue player) {
 
         while (true) {
 
@@ -228,15 +224,13 @@ public class Logic {
             if (whichBoard[xValueAI][yValueAI].equals(CellValue.N)) {
 
                 whichBoard[xValueAI][yValueAI] = player;
-                break;
-
+                return ("[" + xValueAI + ":" + yValueAI + "]");
             }
         }
-
     }
 
 
-    private void constantValueBoard() {
+   /* private void constantValueBoard() {
 
         int[][] valueBoard = new int[3][3];
 
@@ -269,7 +263,7 @@ public class Logic {
 
         }
 
-    }
+    }*/
 
     public boolean firstTurnPlayer(Scanner scan) {
 
@@ -304,19 +298,19 @@ public class Logic {
         switch (thisTurn) {
 
             case 1:
-                PrintBoard.board[0][0] = CellValue.O;
+                Board.realBoard[0][0] = CellValue.O;
                 break;
 
             case 2:
-                PrintBoard.board[2][0] = CellValue.O;
+                Board.realBoard[2][0] = CellValue.O;
                 break;
 
             case 3:
-                PrintBoard.board[0][2] = CellValue.O;
+                Board.realBoard[0][2] = CellValue.O;
                 break;
 
             case 4:
-                PrintBoard.board[2][2] = CellValue.O;
+                Board.realBoard[2][2] = CellValue.O;
         }
     }
 

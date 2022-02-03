@@ -1,25 +1,25 @@
 package logics;
 
-import console.PrintBoard;
-import useless.GameCounter;
-
 import java.util.HashSet;
 import java.util.Set;
 
 public class AI {
 
     // creates new virtual board
-    private CellValue[][] virtualBoard = new CellValue[PrintBoard.board.length][PrintBoard.board.length];
+    private CellValue[][] virtualBoard = new CellValue[Board.realBoard.length][Board.realBoard.length];
 
     // array that counts victories
-    private int[][] victoryCounter = new int[PrintBoard.board.length][PrintBoard.board.length];
+    private int[][] victoryCounter = new int[Board.realBoard.length][Board.realBoard.length];
+    //private int[][] FreeChoiceCounter = new int[PrintBoard.board.length][PrintBoard.board.length]; // counts how many times "free choice" occurs
 
     // a set that saves all played games
     private Set<String> gamesRepository = new HashSet<>();
 
-    //private int turnNumber = 0;
+    public Set<String> getGamesRepository() {
+        return gamesRepository;
+    }
 
-    public void selfPlay(int difficulty) {
+    public String selfPlay(int difficulty) {
 
         // first loop, repeats until every game for every turn is completed
         // second and third loops are listing each cell of the board
@@ -27,23 +27,28 @@ public class AI {
             for (int i = 0; i < 3; i++) {
                 for (int j = 2; j >= 0; j--) {
 
+                    int importedTurnNumber = 1;
+
                     // copies the real board for the AI to "think" about the next turn
                     for (int x = 0; x < 3; x++) {
                         for (int y = 2; y >= 0; y--) {
 
-                            virtualBoard[x][y] = PrintBoard.board[x][y];
+                            virtualBoard[x][y] = Board.realBoard[x][y];
+
+                            // counts how many turns has been already made
+                            if (Board.realBoard[x][y] == CellValue.X || Board.realBoard[x][y] == CellValue.O) {
+                                importedTurnNumber++;
+                            }
                         }
                     }
 
                     //checks whether the cell is already occupied or not, if not the loop starts again
-                    if (!PrintBoard.board[i][j].equals(CellValue.N)) {
+                    if (!Board.realBoard[i][j].equals(CellValue.N)) {
 
                         // the occupied cells are getting too high negative value in order to get never used
                         victoryCounter[i][j] = -100000;
 
-                        // for me to check [commented]
-                        // System.out.println("got on occupied");
-
+                        // System.out.println("got on occupied"); // for me to check [commented]
                         continue;
                     }
 
@@ -56,14 +61,14 @@ public class AI {
                     } else if (difficulty == 3) {
 
                             //[hard] saves all played games in the set
-                            gamesRepository.add(selfTurnHard(i, j));
+                            gamesRepository.add(selfTurnHard(i, j, importedTurnNumber));
                     }
                 }
             }
         }
 
         // makes a turn in the real board in the cell with the highest victory rating
-        realTurn();
+        String madeTurn = realTurn();
 
         // after all virtual games for one real turn are over, the repository gets cleared
         gamesRepository.clear();
@@ -78,6 +83,7 @@ public class AI {
                 //System.out.println("victoryCounter " + i + " " + j + " = " + victoryCounter[i][j]);
             }
         }
+        return madeTurn;
     }
 
     // checks whether all cells are occupied
@@ -105,7 +111,7 @@ public class AI {
     }
 
     // the method makes turns until one virtual game is finished
-    private String selfTurnHard(int x, int y) {
+    private String selfTurnHard(int x, int y, int realBoardTurnAmount) {
 
         //GameCounter gameCounter = new GameCounter();
 
@@ -114,33 +120,48 @@ public class AI {
         //String xTurnCell;
         //String yTurnCell;
 
-        //makes the first turn
-        virtualBoard[x][y] = CellValue.O;
+        virtualBoard[x][y] = CellValue.O; //makes the first turn
+
+        int turnNumber = realBoardTurnAmount; // counts turns
+
+        String oneGame = (turnNumber + "[" + x + ":" + y + "]T "); // saves a game into a String
+        //Shortages: J: Free choice of the "real" AI; H: Prevent enemy's victory (rAI); V: Victory; L: Lost; P: Prevent turn (enemy AI); F: Free choice (eAI); T: Cell try (rAI)
 
         // for me to test the virtual games [commented]
         //PrintBoard.printVirtualBoard(virtualBoard);
 
         // one virtual game; for cycle is used in order not to get in the endless loop
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 200; i++) {
 
             // one turn start
 
             // the "X" computer turn (the virtual player AI)
             // first: the AI checks, whether it's able to finish game this turn, if yes, the AI turns there
-            //arguments: (forWhom, whichBoard, whoPlays)
-            if (!logic.victoryNow(CellValue.X, virtualBoard, CellValue.X)) {
+
+            String currentTurn = logic.victoryNow(CellValue.X, virtualBoard, CellValue.X); // saves the cell coordinate the tur was made in into String
+            char turnType = 'L';
+
+            if (currentTurn == null) {
 
                 // second: the AI checks, whether the enemy is able to finish game this turn, if yes, the AI turns there
-                //arguments: (forWhom, whichBoard, whoPlays)
-                if (!logic.victoryNow(CellValue.O, virtualBoard, CellValue.X)) {
+                currentTurn = logic.victoryNow(CellValue.O, virtualBoard, CellValue.X);
+                turnType = 'P';
+
+                if (currentTurn == null) {
 
                     // last: if after the analysis there is no move the AI could do, he just moves randomly
-                    logic.randomTurn(virtualBoard, CellValue.X);
+                    currentTurn = logic.randomTurn(virtualBoard, CellValue.X);
+                    turnType = 'F';
                     //xTurnCell = gameCounter.randomTurn(virtualBoard, CellValue.X);
 
                 }
             }
-            //turnNumber++;
+
+            turnNumber++; // counts which turn is now, in order sort the turns chronologically later
+
+            oneGame += (turnNumber + currentTurn + turnType + " "); // adds all turn info to the game String
+
+            currentTurn = null; // "clears" the currentTurn
 
             // for me to test the virtual games [commented]
             //PrintBoard.printVirtualBoard(virtualBoard);
@@ -161,7 +182,8 @@ public class AI {
                     // for me to test the set [commented]
                     //System.out.println("twice");
 
-                    PrintBoard.clearBoard(virtualBoard);
+                    Board.clearBoard(virtualBoard);
+                    turnNumber = 0;
                     continue;
                 }
 
@@ -177,7 +199,8 @@ public class AI {
                     // for me to test the set [commented]
                     //System.out.println("twice");
 
-                    PrintBoard.clearBoard(virtualBoard);
+                    Board.clearBoard(virtualBoard);
+                    turnNumber = 0;
                     continue;
                 }
             }
@@ -185,22 +208,32 @@ public class AI {
 
             // the "O" computer turn (the virtual computer AI)
             // first: the AI checks, whether it's able to finish game this turn, if yes, the AI turns there
-            //arguments: (forWhom, whichBoard, whoPlays)
-            if (!logic.victoryNow(CellValue.O, virtualBoard, CellValue.O)) {
+
+            currentTurn = logic.victoryNow(CellValue.O, virtualBoard, CellValue.O);
+            turnType = 'V';
+
+            if (currentTurn == null) {
 
                 // second: the AI checks, whether the enemy is able to finish game this turn, if yes, the AI turns there
-                //arguments: (forWhom, whichBoard, whoPlays)
-                if (!logic.victoryNow(CellValue.X, virtualBoard, CellValue.O)) {
+
+                currentTurn = logic.victoryNow(CellValue.X, virtualBoard, CellValue.O);
+                turnType = 'H';
+
+                if (currentTurn == null) {
 
                     // last: if after the analysis there is no move the AI could do, he just moves randomly
-                    logic.randomTurn(virtualBoard, CellValue.O);
+                    currentTurn = logic.randomTurn(virtualBoard, CellValue.O);
+                    turnType = 'J';
                     //yTurnCell = gameCounter.randomTurn(virtualBoard, CellValue.O);
                 }
             }
-            //turnNumber++;
+            turnNumber++;
 
-            // for me to test the virtual games [commented]
-            //PrintBoard.printVirtualBoard(virtualBoard);
+            oneGame += (turnNumber + currentTurn + turnType + " "); // adds all turn info to the game String
+
+            currentTurn = null; // "clears" the currentTurn
+
+            //PrintBoard.printVirtualBoard(virtualBoard); // for me to test the virtual games [commented]
 
             // checks user's victory; same principe as by the AI check
             if (logic.victory(CellValue.O, virtualBoard)) {
@@ -212,11 +245,10 @@ public class AI {
                     break;
 
                 } else {
+                    //System.out.println("twice"); // for me to test the set [commented]
 
-                    // for me to test the set [commented]
-                    //System.out.println("twice");
-
-                    PrintBoard.clearBoard(virtualBoard);
+                    Board.clearBoard(virtualBoard);
+                    turnNumber = 0;
                 }
 
             } else if (over(virtualBoard)) {
@@ -227,40 +259,35 @@ public class AI {
 
                 } else {
 
-                    // for me to test the set [commented]
-                    //System.out.println("twice");
+                    //System.out.println("twice"); // for me to test the set [commented]
 
-                    PrintBoard.clearBoard(virtualBoard);
+                    Board.clearBoard(virtualBoard);
+                    turnNumber = 0;
                 }
             }
 
             // one turn over
         }
 
-        // saves current game
-        String lastGame = arrayToString(virtualBoard);
+        //String lastGame = arrayToString(virtualBoard); // saves current game
 
-        // for me to test the set [commented]
-        // for (String playedGame : gamesRepository){
-           // System.out.println(playedGame);}
-
+        //for (String playedGame : gamesRepository){ System.out.println(playedGame); } // for me to test the set [commented]
 
         // after one virtual game is over the virtual board gets "cleared" (every cell gets "N"(empty) value)
         for(int i = 0; i < 3; i++){
             for(int j = 2; j >= 0; j--) {
 
-                // for me to test [commented]
-                //System.out.println(i + " " + j + ": the current victory counter: " + victoryCounter[i][j]);
+                //System.out.println(i + " " + j + ": the current victory counter: " + victoryCounter[i][j]); // for me to test [commented]
 
                 virtualBoard[i][j] = CellValue.N;
 
                 // System.out.println(board[i][j].getTag());
             }
         }
-        return lastGame;
+        return /*lastGame*/ oneGame;
     }
 
-    private void realTurn () {
+    private String realTurn () {
 
         //finds the cell with the highest victory value
         int bestCell = victoryCounter[0][2];
@@ -287,15 +314,16 @@ public class AI {
 
                 if (victoryCounter[xBestOption][yBestOption] == bestCell) {
 
-                    PrintBoard.board[xBestOption][yBestOption] = CellValue.O;
+                    Board.realBoard[xBestOption][yBestOption] = CellValue.O;
 
                     // for me to test [commented]
                     // System.out.println("it works");
 
-                    return;
+                    return ("[" + xBestOption + " " + yBestOption + "]");
                 }
             }
         }
+        return null; // actually should never shoot, but an error occurs for not having default return statement
     }
 
    /* public void selfPlayHard() {
@@ -366,11 +394,11 @@ public class AI {
             // the "X" computer turn (the virtual player AI)
             // first: the AI checks, whether it's able to finish game this turn, if yes, the AI turns there
             //arguments: (forWhom, whichBoard, whoPlays)
-            if (!logic.victoryNow(CellValue.X, virtualBoard, CellValue.X)) {
+            if (logic.victoryNow(CellValue.X, virtualBoard, CellValue.X) == null) {
 
                 // second: the AI checks, whether the enemy is able to finish game this turn, if yes, the AI turns there
                 //arguments: (forWhom, whichBoard, whoPlays)
-                if (!logic.victoryNow(CellValue.O, virtualBoard, CellValue.X)) {
+                if (logic.victoryNow(CellValue.O, virtualBoard, CellValue.X) == null) {
 
                     // last: if after the analysis there is no move the AI could do, he just moves randomly
                     logic.randomTurn(virtualBoard, CellValue.X);
@@ -393,11 +421,11 @@ public class AI {
             // the "O" computer turn (the virtual computer AI)
             // first: the AI checks, whether it's able to finish game this turn, if yes, the AI turns there
             //arguments: (forWhom, whichBoard, whoPlays)
-            if (!logic.victoryNow(CellValue.O, virtualBoard, CellValue.O)) {
+            if (logic.victoryNow(CellValue.O, virtualBoard, CellValue.O) == null) {
 
                 // second: the AI checks, whether the enemy is able to finish game this turn, if yes, the AI turns there
                 //arguments: (forWhom, whichBoard, whoPlays)
-                if (!logic.victoryNow(CellValue.X, virtualBoard, CellValue.O)) {
+                if (logic.victoryNow(CellValue.X, virtualBoard, CellValue.O) == null) {
 
                     // last: if after the analysis there is no move the AI could do, he just moves randomly
                     logic.randomTurn(virtualBoard, CellValue.O);

@@ -1,8 +1,10 @@
 package useless;
 
+import logics.AI;
 import logics.CellValue;
 
 import java.security.KeyPair;
+import java.util.Set;
 
 public class GameCounter {
 
@@ -84,5 +86,21 @@ public class GameCounter {
         return value;
     }
 
+    private void gameAnalysis() {
+
+        //AI ai = new AI();
+        //Set<String> collection = ai.getGamesRepository();
+
+        String example = ("1[1 0]T | 2[1 2]F | 3[2 1]J | 4[1 1]F | 5[2 2]H | 6[2 0]P | 7[0 2]H | 8[0 1]F | ");
+
+        if (example.contains("V")) {
+
+            System.out.println(" fefd");
+
+        }
+
+
+
+    }
 
 }

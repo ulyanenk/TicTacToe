@@ -1,10 +1,29 @@
 package useless;
 
-import console.PrintBoard;
+import logics.Board;
 import logics.CellValue;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Scenarios {
 
+    Map<Integer, Integer> scenarioFirst = new HashMap<>();
+    Map<Integer, CellSpecification> scenarioSecond = new HashMap<>();
+
+    public void mapsValue() {
+
+        scenarioSecond.put(00, CellSpecification.CORNER);
+        scenarioSecond.put(01, CellSpecification.FLANK);
+        scenarioSecond.put(02, CellSpecification.CORNER);
+        scenarioSecond.put(10, CellSpecification.FLANK);
+        scenarioSecond.put(11, CellSpecification.CENTER);
+        scenarioSecond.put(12, CellSpecification.FLANK);
+        scenarioSecond.put(20, CellSpecification.CORNER);
+        scenarioSecond.put(21, CellSpecification.FLANK);
+        scenarioSecond.put(22, CellSpecification.CORNER);
+
+    }
 
 
     static void scenarioChoice(int x, int y) {
@@ -77,17 +96,17 @@ public class Scenarios {
 
         if(x == 1 && y == 0) {
 
-            PrintBoard.board[0][2] = CellValue.O;
+            Board.realBoard[0][2] = CellValue.O;
             return true;
 
         } else if(x == 0 && y == 1) {
 
-            PrintBoard.board[2][0] = CellValue.O;
+            Board.realBoard[2][0] = CellValue.O;
             return true;
 
         } else {
 
-            PrintBoard.board[1][1] = CellValue.O;
+            Board.realBoard[1][1] = CellValue.O;
             return false;
         }
 

@@ -1,8 +1,9 @@
 package console;
 
-import com.Main;
+//import Main;
 import logics.CellValue;
 import logics.Logic;
+import logics.Board;
 
 import java.util.Scanner;
 
@@ -18,6 +19,11 @@ public class Input {
     // is in the class in order to be able to print out the user's input in case of error caused by user's wrong input
     private String eingabe;
 
+    private Scanner scanner;
+
+    public Input(Scanner scanner) {
+        this.scanner = scanner;
+    }
 
     private void chronologyAssignment(Scanner valueScanner) {
 
@@ -111,12 +117,12 @@ public class Input {
 
 
     // reads the y value (digit) and checks the whether the x value is suitable
-    public void digitValueCheck(CellValue whoPlays) {
+    public String digitValueCheck(CellValue whoPlays) {
 
         while (true) {
 
             // finds out where is the x and y value
-            chronologyAssignment(Main.scan);
+            chronologyAssignment(scanner);
 
             // checks the value
             try {
@@ -128,11 +134,11 @@ public class Input {
                     int yValue = digitConvert - 1;
 
                     //checks whether the cell is already occupied or not
-                    if (PrintBoard.board[xValue][yValue].equals(CellValue.N)) {
+                    if (Board.realBoard[xValue][yValue].equals(CellValue.N)) {
 
                         // inserts the user's values in the board array
-                       PrintBoard.board[xValue][yValue] = whoPlays;
-                        break;
+                       Board.realBoard[xValue][yValue] = whoPlays;
+                        return ("[" + xValue + " " + yValue + "]");
 
                     } else {
                         System.out.println("This cell is already occupied");
@@ -147,7 +153,6 @@ public class Input {
             // PrintBoard.board[xValue][yValue] = CellValue.X;
 
         }
-
     }
 
     // asks who shall turn first
