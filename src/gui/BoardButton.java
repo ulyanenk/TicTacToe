@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class BoardButton extends JButton implements ActionListener {
+public class BoardButton extends JButton /*implements ActionListener*/ {
 
     private final int x;
     private final int y;
@@ -25,7 +25,7 @@ public class BoardButton extends JButton implements ActionListener {
         this.setFont(boardFont);
     }
 
-    @Override
+    /*@Override
     public void actionPerformed(ActionEvent e) { // after the button pushed
 
         //this.setEnabled(false);
@@ -34,7 +34,7 @@ public class BoardButton extends JButton implements ActionListener {
         makeTurn(CellValue.X);
         //Board.printField();
         //GamePanel.update();
-    }
+    }*/
 
     // temporary turn, so long it's not connected with the main project
     /*public static void tempTurn() {
@@ -92,17 +92,21 @@ public class BoardButton extends JButton implements ActionListener {
             case X -> {
                 this.setEnabled(false);
                 this.setText("X");
-                this.setFont(boardFont);
+                //this.setFont(boardFont);
             }
             case O -> {
                 this.setEnabled(false);
                 this.setText("O");
-                this.setFont(boardFont);
+                //this.setFont(boardFont);
             }
-            case N -> {
-                this.setEnabled(true);
-                this.setText("");
-            }
+//            case N -> {
+//                this.setEnabled(true);
+//                this.setText("");
+//            }
         }
+    }
+
+    public void disableButton() {
+        this.setEnabled(false);
     }
 }

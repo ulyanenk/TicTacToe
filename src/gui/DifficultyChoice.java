@@ -1,33 +1,31 @@
 package gui;
 
+import logics.Board;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class DifficultyChoice extends JPanel implements ActionListener {
+public class DifficultyChoice extends JPanel {
 
-    private JLabel textLabel =  new JLabel("Choose Difficulty: ");
+    private JLabel textLabel = new JLabel("Choose Difficulty: ");
 
-    private JButton easy = new DifficultyButton("EASY");
-    private JButton normal = new DifficultyButton("NORMAL");
-    private JButton hard = new DifficultyButton("HARD");
-    private JButton twoPlayers = new DifficultyButton("TWO PLAYERS");
+    JButton easy = new DifficultyButton("EASY");
+    JButton normal = new DifficultyButton("NORMAL");
+    JButton hard = new DifficultyButton("HARD");
+    JButton twoPlayers = new DifficultyButton("TWO PLAYERS");
 
     private JPanel buttonHolder = new JPanel(); // buttons stacked here
 
-    private int difficulty;
+    ActionListener parent;
 
-    public int getDifficulty() {
-        return difficulty;
-    }
+    DifficultyChoice(ActionListener parent) {
 
-    DifficultyChoice() {
-
-        easy.addActionListener(this);
-        normal.addActionListener(this);
-        hard.addActionListener(this);
-        twoPlayers.addActionListener(this);
+        easy.addActionListener(parent);
+        normal.addActionListener(parent);
+        hard.addActionListener(parent);
+        twoPlayers.addActionListener(parent);
 
         buttonHolder.setBackground(Color.WHITE);
         buttonHolder.setPreferredSize(new Dimension(100, 500));
@@ -52,22 +50,25 @@ public class DifficultyChoice extends JPanel implements ActionListener {
 
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
-        if (e.getSource() == easy) {
-            difficulty = 1;
-
-        } else if (e.getSource() == normal) {
-            difficulty = 2;
-
-        } else if (e.getSource() == hard) {
-            difficulty = 3;
-
-        } else if (e.getSource() == twoPlayers) {
-            difficulty = 4;
-        }
-
-        Window.switchToGame(); //after the difficulty is chosen, the panel is no longer visible
-    }
+//    @Override
+//    public void actionPerformed(ActionEvent e) {
+//
+//        if (e.getSource() == this.easy) {
+//            difficulty = 1;
+//
+//        } else if (e.getSource() == normal) {
+//            difficulty = 2;
+//
+//        } else if (e.getSource() == hard) {
+//            difficulty = 3;
+//
+//        } else if (e.getSource() == twoPlayers) {
+//            difficulty = 4;
+//        }
+//
+//        this.
+//
+//                Board.clearBoard(); // gives start value for all cells (empty)
+//        parent.switchToGame(); //after the difficulty is chosen, the panel is no longer visible
+//    }
 }

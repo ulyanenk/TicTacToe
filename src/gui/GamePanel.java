@@ -1,6 +1,9 @@
 package gui;
 
+import logics.AI;
+import logics.Board;
 import logics.CellValue;
+import logics.Logic;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,24 +15,33 @@ import java.util.List;
 public class GamePanel extends JPanel implements ActionListener {
 
 
-    private static JButton button00 = new BoardButton(0, 0);
-    private static JButton button01 = new BoardButton(0, 1);
-    private static JButton button02 = new BoardButton(0, 2);
-    private static JButton button10 = new BoardButton(1, 0);
-    private static JButton button11 = new BoardButton(1, 1);
-    private static JButton button12 = new BoardButton(1, 2);
-    private static JButton button20 = new BoardButton(2, 0);
-    private static JButton button21 = new BoardButton(2, 1);
-    private static JButton button22 = new BoardButton(2, 2);
+    private static BoardButton button00 = new BoardButton(0, 0);
+    private static BoardButton button01 = new BoardButton(0, 1);
+    private static BoardButton button02 = new BoardButton(0, 2);
+    private static BoardButton button10 = new BoardButton(1, 0);
+    private static BoardButton button11 = new BoardButton(1, 1);
+    private static BoardButton button12 = new BoardButton(1, 2);
+    private static BoardButton button20 = new BoardButton(2, 0);
+    private static BoardButton button21 = new BoardButton(2, 1);
+    private static BoardButton button22 = new BoardButton(2, 2);
 
     JButton playAgain = new JButton("Play Again");
     //JLabel label00;
-
     List<BoardButton> buttonList = new ArrayList<>();
+    JLabel turnText = new JLabel();
+    RunGame runGame = new RunGame();
+
+
+    private int difficulty;
+
+    public void setDifficulty(int difficulty) {
+        this.difficulty = difficulty;
+    }
+
+    private final int[] score = {0, 0}; // counts each victory of both players
 
     GamePanel() {
 
-        JLabel turnText = new JLabel(); // create a label
         JPanel boardPanel = new JPanel();
         //JPanel scorePanel = new ScorePanel();
 
@@ -39,12 +51,11 @@ public class GamePanel extends JPanel implements ActionListener {
         buttonList.add((BoardButton) button10);
         buttonList.add((BoardButton) button11);
         buttonList.add((BoardButton) button12);
-        buttonList.add((BoardButton) button20);
-        buttonList.add((BoardButton) button21);
-        buttonList.add((BoardButton) button22);
+        buttonList.add(button20);
+        buttonList.add(button21);
+        buttonList.add(button22);
 
         addActionListenerToButtons();
-//        button00.addActionListener(this);
 //        button10.addActionListener(this);
 //        button20.addActionListener(this);
 //        button01.addActionListener(this);
@@ -91,7 +102,6 @@ public class GamePanel extends JPanel implements ActionListener {
         this.add(boardPanel);
         this.add(playAgain);
         //this.add(scorePanel);
-
     }
 
     @Override
@@ -101,30 +111,90 @@ public class GamePanel extends JPanel implements ActionListener {
 
             // cleanBoard();
             // synchronize();
-        } else {
 
-            makeTurn(CellValue.X);
+        } else { // for the bord buttons
+
+            // makes turn in the button, that was pushed
+            for (BoardButton n : buttonList) {
+               if (n == e.getSource()){
+                   n.makeTurn(CellValue.X);
+                   n.setEnabled(false);
+                   n.setText("X");
+               }
+            }
+
+            if (!checkVictory(CellValue.X)) {
+                runGame.AiTurn(difficulty);
+                checkVictory(CellValue.O);
+            }
             update();
         }
     }
 
-     void update() {
+     private void update() {
         for (BoardButton n : buttonList) {
             n.synchronize();
         }
     }
 
-    void addActionListenerToButtons() {
+    private void addActionListenerToButtons() {
         for (BoardButton n : buttonList) {
             n.addActionListener(this);
         }
     }
 
-    void makeTurn(CellValue player){
+    private void gameOver() {
+        for (BoardButton n : buttonList) {
+            n.disableButton();
+        }
+
+    }
+
+   /* private String setGameOverSign(int gameResult) {
+
+        switch (gameResult) {
+
+            case 1: return "You Won";
+            case 2: return "You Lost";
+            case 3: return "Draw";
+            case 4: return "X player wins";
+            case 5: return "O player wins";
+            default: return null; // shall never shoot
+        }
+    }*/
+
+    private boolean checkVictory(CellValue forWhom){ // checks the whether any party has won this turn
+
+        Logic logic = new Logic();
+        AI ai = new AI();
+
+            // checks the whether the user has won this turn or if all cells are occupied, it's draw
+            if (logic.victory(forWhom, Board.realBoard)) {
+
+                if (forWhom == CellValue.X) {
+                    turnText.setText("You won");
+                    score[1]++;
+
+                } else if (forWhom == CellValue.O) {
+                    turnText.setText("You lost");
+                    score[0]++;
+                }
+                gameOver();
+                return true;
+
+            } else if (ai.over(Board.realBoard)) {
+                turnText.setText("Draw");
+                gameOver();
+                return true;
+            }
+            return false;
+    }
+
+    /*void makeTurn(CellValue player){
         for (BoardButton n : buttonList) {
             n.makeTurn(player);
         }
-    }
+    }*/
 
 
     // ScoreTable (isn't finished yet)
