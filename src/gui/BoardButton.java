@@ -86,7 +86,7 @@ public class BoardButton extends JButton /*implements ActionListener*/ {
         Board.realBoard[x][y] = player;
     }
 
-    public void synchronize() {
+    public void synchronize(boolean emptyCells) {
 
         switch (Board.realBoard[x][y]) {
             case X -> {
@@ -100,13 +100,15 @@ public class BoardButton extends JButton /*implements ActionListener*/ {
                 //this.setFont(boardFont);
             }
 //            case N -> {
-//                this.setEnabled(true);
+//              this.setEnabled(true);
 //                this.setText("");
-//            }
+//           }
+        }
+
+        if (emptyCells && Board.realBoard[x][y] == CellValue.N) {
+            this.setEnabled(true);
+            this.setText("");
         }
     }
 
-    public void disableButton() {
-        this.setEnabled(false);
-    }
 }

@@ -15,22 +15,23 @@ import java.util.List;
 public class GamePanel extends JPanel implements ActionListener {
 
 
-    private static BoardButton button00 = new BoardButton(0, 0);
-    private static BoardButton button01 = new BoardButton(0, 1);
-    private static BoardButton button02 = new BoardButton(0, 2);
-    private static BoardButton button10 = new BoardButton(1, 0);
-    private static BoardButton button11 = new BoardButton(1, 1);
-    private static BoardButton button12 = new BoardButton(1, 2);
-    private static BoardButton button20 = new BoardButton(2, 0);
-    private static BoardButton button21 = new BoardButton(2, 1);
-    private static BoardButton button22 = new BoardButton(2, 2);
+    private BoardButton button00 = new BoardButton(0, 0);
+    private BoardButton button01 = new BoardButton(0, 1);
+    private BoardButton button02 = new BoardButton(0, 2);
+    private BoardButton button10 = new BoardButton(1, 0);
+    private BoardButton button11 = new BoardButton(1, 1);
+    private BoardButton button12 = new BoardButton(1, 2);
+    private BoardButton button20 = new BoardButton(2, 0);
+    private BoardButton button21 = new BoardButton(2, 1);
+    private BoardButton button22 = new BoardButton(2, 2);
 
     JButton playAgain = new JButton("Play Again");
     //JLabel label00;
     List<BoardButton> buttonList = new ArrayList<>();
     JLabel turnText = new JLabel();
     RunGame runGame = new RunGame();
-
+    ScorePanel scorePanel;
+    JButton aiTurnFirstButton;
 
     private int difficulty;
 
@@ -43,27 +44,27 @@ public class GamePanel extends JPanel implements ActionListener {
     GamePanel() {
 
         JPanel boardPanel = new JPanel();
-        //JPanel scorePanel = new ScorePanel();
+        scorePanel = new ScorePanel();
+        aiTurnFirstButton = new JButton("AI moves first");
 
-        buttonList.add((BoardButton) button00);
-        buttonList.add((BoardButton) button01);
-        buttonList.add((BoardButton) button02);
-        buttonList.add((BoardButton) button10);
-        buttonList.add((BoardButton) button11);
-        buttonList.add((BoardButton) button12);
+        aiTurnFirstButton.setBounds(90, 0, 220, 50);
+        aiTurnFirstButton.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+        aiTurnFirstButton.setBackground(Color.WHITE);
+        aiTurnFirstButton.setFont(new Font(null, Font.ROMAN_BASELINE, 30));
+        aiTurnFirstButton.setEnabled(true);
+        aiTurnFirstButton.setVisible(true);
+        aiTurnFirstButton.addActionListener(this);
+
+        buttonList.add(button00);
+        buttonList.add(button01);
+        buttonList.add(button02);
+        buttonList.add(button10);
+        buttonList.add(button11);
+        buttonList.add(button12);
         buttonList.add(button20);
         buttonList.add(button21);
         buttonList.add(button22);
-
         addActionListenerToButtons();
-//        button10.addActionListener(this);
-//        button20.addActionListener(this);
-//        button01.addActionListener(this);
-//        button02.addActionListener(this);
-//        button11.addActionListener(this);
-//        button12.addActionListener(this);
-//        button21.addActionListener(this);
-//        button22.addActionListener(this);
 
         playAgain.setBounds(90, 0, 220, 50);
         playAgain.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
@@ -71,6 +72,7 @@ public class GamePanel extends JPanel implements ActionListener {
         playAgain.setFont(new Font(null, Font.ROMAN_BASELINE, 40));
         playAgain.setEnabled(false);
         playAgain.setVisible(false);
+        playAgain.addActionListener(this);
 
         turnText.setText("Your turn: "); // set text of the label
         turnText.setForeground(Color.BLUE); // set colour of the text
@@ -101,7 +103,8 @@ public class GamePanel extends JPanel implements ActionListener {
         this.add(turnText);
         this.add(boardPanel);
         this.add(playAgain);
-        //this.add(scorePanel);
+        this.add(scorePanel);
+        this.add(aiTurnFirstButton);
     }
 
     @Override
@@ -109,8 +112,23 @@ public class GamePanel extends JPanel implements ActionListener {
 
         if (e.getSource() == playAgain) {
 
-            // cleanBoard();
-            // synchronize();
+             Board.clearBoard();
+             update(true);
+             turnText.setText("Your Turn");
+             playAgain.setEnabled(false);
+             playAgain.setVisible(false);
+
+            aiTurnFirstButton.setEnabled(true);
+            aiTurnFirstButton.setVisible(true);
+
+        } else if (e.getSource() == aiTurnFirstButton) {
+
+            aiTurnFirstButton.setEnabled(false);
+            aiTurnFirstButton.setVisible(false);
+
+            Logic logic = new Logic();
+            logic.firstTurnCornerRandom();
+            update(true);
 
         } else { // for the bord buttons
 
@@ -122,18 +140,23 @@ public class GamePanel extends JPanel implements ActionListener {
                    n.setText("X");
                }
             }
-
             if (!checkVictory(CellValue.X)) {
                 runGame.AiTurn(difficulty);
                 checkVictory(CellValue.O);
             }
-            update();
+            update(false);
+
+            if (aiTurnFirstButton.isEnabled()) {
+                aiTurnFirstButton.setEnabled(false); // turns off this button if, it wasn't chosen
+                aiTurnFirstButton.setVisible(false);
+            }
         }
+
     }
 
-     private void update() {
+     private void update(boolean emptyCells) {
         for (BoardButton n : buttonList) {
-            n.synchronize();
+            n.synchronize(emptyCells);
         }
     }
 
@@ -143,9 +166,9 @@ public class GamePanel extends JPanel implements ActionListener {
         }
     }
 
-    private void gameOver() {
+    private void disableAllButtons() {
         for (BoardButton n : buttonList) {
-            n.disableButton();
+            n.setEnabled(false);
         }
 
     }
@@ -179,28 +202,27 @@ public class GamePanel extends JPanel implements ActionListener {
                     turnText.setText("You lost");
                     score[0]++;
                 }
-                gameOver();
+                disableAllButtons();
+                playAgain.setEnabled(true);
+                playAgain.setVisible(true);
+                scorePanel.actualize();
                 return true;
 
             } else if (ai.over(Board.realBoard)) {
                 turnText.setText("Draw");
-                gameOver();
+                disableAllButtons();
+                playAgain.setEnabled(true);
+                playAgain.setVisible(true);
                 return true;
             }
             return false;
     }
 
-    /*void makeTurn(CellValue player){
-        for (BoardButton n : buttonList) {
-            n.makeTurn(player);
-        }
-    }*/
-
 
     // ScoreTable (isn't finished yet)
-    /*private class ScorePanel extends JPanel {
+    private class ScorePanel extends JPanel {
 
-        private int score[] = {2, 1};
+        //private int score[] = {2, 1};
 
         JLabel scoreLabel = new JLabel();
         JLabel values = new JLabel();
@@ -209,18 +231,18 @@ public class GamePanel extends JPanel implements ActionListener {
 
             Font scoreFont = new Font("scoreFont", Font.ITALIC, 30);
 
-            setBounds(300, 0 , 200, 100);
+            setBounds(330, 0 , 200, 100);
 
-            scoreLabel.setSize(50, 30);
-            scoreLabel.setText("O    X");
+            scoreLabel.setSize(50, 10);
+            scoreLabel.setText("O  X");
             scoreLabel.setFont(scoreFont);
             //scoreLabel.setVerticalAlignment(JLabel.TOP);
             //scoreLabel.setHorizontalAlignment(JLabel.CENTER);
             scoreLabel.setBackground(Color.GREEN);
             scoreLabel.setOpaque(false);
 
-            values.setSize(50, 30);
-            values.setText("3  |  2");
+            values.setSize(50, 20);
+            values.setText(score[0] + " : " + score[1]);
             values.setFont(scoreFont);
             values.setBackground(Color.RED);
             values.setOpaque(false);
@@ -233,6 +255,20 @@ public class GamePanel extends JPanel implements ActionListener {
             this.setBackground(Color.WHITE);
 
         }
-    }*/
+
+        void actualize() {
+            values.setText(score[0] + " : " + score[1]);
+
+            if (score[1] >= 10 && score[0] >= 10) {
+                scoreLabel.setText(" O    X");
+
+            } else if (score[0] >= 10) {
+                scoreLabel.setText(" O   X");
+
+            } else if (score[1] >= 10) {
+                scoreLabel.setText("O   X");
+            }
+        }
+    }
 
 }

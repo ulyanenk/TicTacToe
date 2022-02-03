@@ -26,6 +26,7 @@ public class DifficultyChoice extends JPanel {
         normal.addActionListener(parent);
         hard.addActionListener(parent);
         twoPlayers.addActionListener(parent);
+        twoPlayers.setEnabled(false); // isn't finished yet
 
         buttonHolder.setBackground(Color.WHITE);
         buttonHolder.setPreferredSize(new Dimension(100, 500));
