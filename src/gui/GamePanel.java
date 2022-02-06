@@ -138,17 +138,23 @@ public class GamePanel extends JPanel implements ActionListener {
                    n.makeTurn(CellValue.X);
                    n.setEnabled(false);
                    n.setText("X");
+                   System.out.println("turn made");
+                   Board.printField();
                }
             }
+            System.out.println("out from if");
             if (!checkVictory(CellValue.X)) {
                 runGame.AiTurn(difficulty);
                 checkVictory(CellValue.O);
+                System.out.println("ai's turn made");
+                Board.printField();
             }
             update(false);
 
             if (aiTurnFirstButton.isEnabled()) {
                 aiTurnFirstButton.setEnabled(false); // turns off this button if, it wasn't chosen
                 aiTurnFirstButton.setVisible(false);
+                System.out.println("AI not first turn");
             }
         }
 

@@ -1,4 +1,4 @@
-package useless;
+package logics;
 
 public enum CellSpecification {
 
