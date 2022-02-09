@@ -22,9 +22,8 @@ public class TicTacWindow extends JFrame implements ActionListener {
 
         ImageIcon boardPicture = new ImageIcon("gui/boardLogo.png");
 
-        difficultyChoice = new DifficultyChoice(this);
-
-        gamePanel = new GamePanel();
+        difficultyChoice = new DifficultyChoice(this); // "this" in closes defines the ActionListener
+        gamePanel = new GamePanel(this);
 
         panelHolder.setLayout(cardLayout);
         panelHolder.add(difficultyChoice, "difficultyChoice"); // used in CardLayout
@@ -51,13 +50,23 @@ public class TicTacWindow extends JFrame implements ActionListener {
 
     }
 
-    void switchToGame(int difficulty){ // shows the game, after the difficulty gets chosen
+    void switchToGame(int difficulty) { // shows the game, after the difficulty gets chosen
         gamePanel.setDifficulty(difficulty);
+        gamePanel.implementFirstTurnButton(); // implements the first turn button in dependency of the game mode
         cardLayout.show(panelHolder, "gamePanel");
+    }
+
+    void switchToDifficultyChoice () {
+        cardLayout.show(panelHolder, "difficultyChoice");
+        //Board.clearBoard();
+        gamePanel.updateBoard(true);
+        gamePanel.firstTurnButton.setVisible(true);
+        gamePanel.firstTurnButton.setEnabled(true);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        Board.clearBoard(); // gives start value for all cells (empty)
 
         if (e.getSource() == difficultyChoice.easy) {
             switchToGame(1);
@@ -70,8 +79,12 @@ public class TicTacWindow extends JFrame implements ActionListener {
 
         } else if (e.getSource() == difficultyChoice.twoPlayers) {
             switchToGame(4);
-        }
 
-        Board.clearBoard(); // gives start value for all cells (empty)
+        } else if (e.getSource() == gamePanel.returnToTheMenu) {
+            switchToDifficultyChoice();
+            gamePanel.playAgain.setEnabled(false);
+            gamePanel.playAgain.setVisible(false);
+        }
+        gamePanel.implementTurnText();
     }
 }

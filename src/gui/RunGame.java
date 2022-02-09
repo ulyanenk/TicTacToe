@@ -62,7 +62,7 @@ public class RunGame {
 
     }*/
 
-    public void AiTurn(int difficulty){
+    public void AiTurn(int difficulty) {
 
         // first: the AI checks, whether it's able to finish game this turn, if yes, the AI turns there
         if (logic.victoryNow(CellValue.O, Board.realBoard, CellValue.O) == null) {

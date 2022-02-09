@@ -14,7 +14,6 @@ import java.util.List;
 
 public class GamePanel extends JPanel implements ActionListener {
 
-
     private BoardButton button00 = new BoardButton(0, 0);
     private BoardButton button01 = new BoardButton(0, 1);
     private BoardButton button02 = new BoardButton(0, 2);
@@ -25,13 +24,16 @@ public class GamePanel extends JPanel implements ActionListener {
     private BoardButton button21 = new BoardButton(2, 1);
     private BoardButton button22 = new BoardButton(2, 2);
 
-    JButton playAgain = new JButton("Play Again");
+    JButton playAgain; //= new JButton(/*"Play Again"*/);
     //JLabel label00;
     List<BoardButton> buttonList = new ArrayList<>();
     JLabel turnText = new JLabel();
     RunGame runGame = new RunGame();
     ScorePanel scorePanel;
-    JButton aiTurnFirstButton;
+    JButton firstTurnButton;
+    JButton returnToTheMenu;
+
+    ImageIcon arrow = new ImageIcon("gui/leftArrow.png");
 
     private int difficulty;
 
@@ -40,20 +42,35 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     private final int[] score = {0, 0}; // counts each victory of both players
+    private int turnCounter = 1;
 
-    GamePanel() {
+    ActionListener parent;
+
+    GamePanel(ActionListener parent) {
 
         JPanel boardPanel = new JPanel();
         scorePanel = new ScorePanel();
-        aiTurnFirstButton = new JButton("AI moves first");
+        firstTurnButton = new JButton(/*"AI moves first"*/);
+        returnToTheMenu = new JButton();
+        playAgain = new JButton("Play Again");
 
-        aiTurnFirstButton.setBounds(90, 0, 220, 50);
-        aiTurnFirstButton.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
-        aiTurnFirstButton.setBackground(Color.WHITE);
-        aiTurnFirstButton.setFont(new Font(null, Font.ROMAN_BASELINE, 30));
-        aiTurnFirstButton.setEnabled(true);
-        aiTurnFirstButton.setVisible(true);
-        aiTurnFirstButton.addActionListener(this);
+        returnToTheMenu.setBounds(10, 0, 60, 60);;
+        returnToTheMenu.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
+        returnToTheMenu.setBackground(Color.WHITE);
+       // returnToTheMenu.setFont(new Font(null, Font.BOLD, 30));
+        returnToTheMenu.setIcon(arrow);
+        returnToTheMenu.setEnabled(true);
+        returnToTheMenu.setVisible(true);
+        returnToTheMenu.addActionListener(parent);
+
+        firstTurnButton.setBounds(90, 0, 220, 50);
+        firstTurnButton.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+        firstTurnButton.setBackground(Color.WHITE);
+        firstTurnButton.setFont(new Font(null, Font.ROMAN_BASELINE, 30));
+        firstTurnButton.setEnabled(true);
+        firstTurnButton.setVisible(true);
+        firstTurnButton.addActionListener(this);
+        //implementFirstTurnButton();
 
         buttonList.add(button00);
         buttonList.add(button01);
@@ -104,7 +121,8 @@ public class GamePanel extends JPanel implements ActionListener {
         this.add(boardPanel);
         this.add(playAgain);
         this.add(scorePanel);
-        this.add(aiTurnFirstButton);
+        this.add(firstTurnButton);
+        this.add(returnToTheMenu);
     }
 
     @Override
@@ -113,54 +131,74 @@ public class GamePanel extends JPanel implements ActionListener {
         if (e.getSource() == playAgain) {
 
              Board.clearBoard();
-             update(true);
-             turnText.setText("Your Turn");
+             updateBoard(true);
+             //turnText.setText("Your Turn");
+
              playAgain.setEnabled(false);
              playAgain.setVisible(false);
 
-            aiTurnFirstButton.setEnabled(true);
-            aiTurnFirstButton.setVisible(true);
+            firstTurnButton.setEnabled(true);
+            firstTurnButton.setVisible(true);
 
-        } else if (e.getSource() == aiTurnFirstButton) {
+            implementTurnText();
 
-            aiTurnFirstButton.setEnabled(false);
-            aiTurnFirstButton.setVisible(false);
+        } else if (e.getSource() == firstTurnButton) {
 
-            Logic logic = new Logic();
-            logic.firstTurnCornerRandom();
-            update(true);
+            if (difficulty == 4) { // if two players mode is on, it adds 1 to a counter
+                turnCounter++;
+                implementFirstTurnButton();
+                implementTurnText();
 
-        } else { // for the bord buttons
+            } else {
+                firstTurnButton.setEnabled(false);
+                firstTurnButton.setVisible(false);
+                Logic logic = new Logic();
+                logic.firstTurnCornerRandom();
+                updateBoard(true);
+            }
 
-            // makes turn in the button, that was pushed
-            for (BoardButton n : buttonList) {
-               if (n == e.getSource()){
-                   n.makeTurn(CellValue.X);
-                   n.setEnabled(false);
-                   n.setText("X");
-                   System.out.println("turn made");
-                   Board.printField();
+
+        } //else if (e.getSource() == returnToTheMenu) {
+        //}
+        else { // for the bord buttons
+
+            if (difficulty != 4) { // if playing against AI
+                makeTurn(CellValue.X, e); // makes turn in the button, that was pushed
+
+                if (!checkVictory(CellValue.X)) {
+                    runGame.AiTurn(difficulty);
+                    checkVictory(CellValue.O);
+                    //System.out.println("ai's turn made");
+                    //Board.printField();
+                }
+                updateBoard(false);
+
+            } else { // if playing against another human
+               twoPlayersMode(e);
+
+               CellValue player; // updates the turn text label
+               if (isEven(turnCounter)) {
+                   player = CellValue.X;
+               } else {
+                   player = CellValue.O;
                }
-            }
-            System.out.println("out from if");
-            if (!checkVictory(CellValue.X)) {
-                runGame.AiTurn(difficulty);
-                checkVictory(CellValue.O);
-                System.out.println("ai's turn made");
-                Board.printField();
-            }
-            update(false);
 
-            if (aiTurnFirstButton.isEnabled()) {
-                aiTurnFirstButton.setEnabled(false); // turns off this button if, it wasn't chosen
-                aiTurnFirstButton.setVisible(false);
-                System.out.println("AI not first turn");
+               if (!checkVictory(player)) {
+                   implementTurnText();
+               }
+                //update(false);
+            }
+            if (firstTurnButton.isEnabled()) {
+                firstTurnButton.setEnabled(false); // turns off this button if, it wasn't chosen
+                firstTurnButton.setVisible(false);
+                //System.out.println("AI not first turn");
             }
         }
+//        implementTurnText();
 
     }
 
-     private void update(boolean emptyCells) {
+     void updateBoard(boolean emptyCells) {
         for (BoardButton n : buttonList) {
             n.synchronize(emptyCells);
         }
@@ -177,6 +215,82 @@ public class GamePanel extends JPanel implements ActionListener {
             n.setEnabled(false);
         }
 
+    }
+
+    private void makeTurn(CellValue player, ActionEvent e) {
+
+        for (BoardButton n : buttonList) {
+            if (n == e.getSource()){
+
+                n.makeTurn(player);
+                n.setEnabled(false);
+
+                if (player == CellValue.O) {
+                    n.setText("O");
+                } else if (player == CellValue.X) {
+                    n.setText("X");
+                }
+
+                //System.out.println("turn made"); // [commented]
+                //Board.printField();
+            }
+        }
+    }
+
+    private void twoPlayersMode(ActionEvent e) {
+        //aiTurnFirstButton.setEnabled(false);
+        //aiTurnFirstButton.setVisible(false);
+
+        turnCounter++;
+        CellValue player;
+
+        if (isEven(turnCounter)) {
+            player = CellValue.X;
+        } else {
+            player = CellValue.O;
+        }
+
+        makeTurn(player, e);
+//        if (checkVictory(player)) {
+//            turnCounter = 1;
+//        }
+
+    }
+
+    private boolean isEven(int num) { // checks the parity of an integer
+        return num % 2 == 0;
+    }
+
+    void implementFirstTurnButton() {
+        String buttonText;
+
+        if (difficulty == 4) { // if twoPlayers mode
+            if (!isEven(turnCounter)) {
+                buttonText = "O moves first";
+
+            } else {
+                buttonText = "X moves first";
+            }
+
+        } else { // if playing against AI
+            buttonText = "AI moves first";
+        }
+        firstTurnButton.setText(buttonText);
+    }
+
+    void implementTurnText() {
+        String text;
+        if (difficulty == 4) {
+            if (!isEven(turnCounter)) {
+                text = "X's turn";
+
+            } else {
+                text = "O's turn";
+            }
+        } else {
+            text = "Your turn";
+        }
+        turnText.setText(text);
     }
 
    /* private String setGameOverSign(int gameResult) {
@@ -197,15 +311,27 @@ public class GamePanel extends JPanel implements ActionListener {
         Logic logic = new Logic();
         AI ai = new AI();
 
+        String xWins;
+        String oWins;
+
+        if (difficulty == 4) { // set victory text in dependency of game mode
+            xWins = "X won";
+            oWins = "O won";
+
+        } else {
+            xWins = "You won";
+            oWins = "You lost";
+        }
+
             // checks the whether the user has won this turn or if all cells are occupied, it's draw
             if (logic.victory(forWhom, Board.realBoard)) {
 
                 if (forWhom == CellValue.X) {
-                    turnText.setText("You won");
+                    turnText.setText(xWins);
                     score[1]++;
 
                 } else if (forWhom == CellValue.O) {
-                    turnText.setText("You lost");
+                    turnText.setText(oWins);
                     score[0]++;
                 }
                 disableAllButtons();
@@ -224,8 +350,12 @@ public class GamePanel extends JPanel implements ActionListener {
             return false;
     }
 
+    void returnToMenu() {
 
-    // ScoreTable (isn't finished yet)
+
+    }
+
+
     private class ScorePanel extends JPanel {
 
         //private int score[] = {2, 1};
