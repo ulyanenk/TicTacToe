@@ -314,4 +314,29 @@ public class Logic {
         }
     }
 
+    public String moveInLastCellRemaining(CellValue player) {
+        int freeCellAmount = 0;
+
+        for (int x = 0; x < 3; x++) {
+            for (int y = 2; y >= 0; y--) {
+                if (Board.realBoard[x][y] == CellValue.N) {
+                    freeCellAmount++;
+                }
+            }
+        }
+
+        if (freeCellAmount == 1) {
+            for (int x = 0; x < 3; x++) {
+                for (int y = 2; y >= 0; y--) {
+                    if (Board.realBoard[x][y] == CellValue.N) {
+                        Board.realBoard[x][y] = player;
+
+                        return ("[" + x + ":" + y + "]");
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
 }

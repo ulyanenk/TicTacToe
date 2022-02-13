@@ -82,7 +82,7 @@ public class RunGame {
 
                             if (!scenarios.checkScenario(difficulty)) { // AI checks whether there are scenarios for this situation
                                 ai.selfPlay(difficulty);
-                            }
+                           }
                         }
                     }
                 }

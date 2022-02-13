@@ -42,9 +42,9 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     private final int[] score = {0, 0}; // counts each victory of both players
-    private int turnCounter = 1;
+    private int turnCounter = 1; // defines whose turn is it; if is the integer is odd X moves, if even O moves
 
-    ActionListener parent;
+    //ActionListener parent;
 
     GamePanel(ActionListener parent) {
 
@@ -54,7 +54,7 @@ public class GamePanel extends JPanel implements ActionListener {
         returnToTheMenu = new JButton();
         playAgain = new JButton("Play Again");
 
-        returnToTheMenu.setBounds(10, 0, 60, 60);;
+        returnToTheMenu.setBounds(10, 0, 60, 60);
         returnToTheMenu.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
         returnToTheMenu.setBackground(Color.WHITE);
        // returnToTheMenu.setFont(new Font(null, Font.BOLD, 30));
@@ -157,7 +157,6 @@ public class GamePanel extends JPanel implements ActionListener {
                 updateBoard(true);
             }
 
-
         } //else if (e.getSource() == returnToTheMenu) {
         //}
         else { // for the bord buttons
@@ -195,7 +194,6 @@ public class GamePanel extends JPanel implements ActionListener {
             }
         }
 //        implementTurnText();
-
     }
 
      void updateBoard(boolean emptyCells) {
@@ -367,7 +365,7 @@ public class GamePanel extends JPanel implements ActionListener {
 
             Font scoreFont = new Font("scoreFont", Font.ITALIC, 30);
 
-            setBounds(330, 0 , 200, 100);
+            setBounds(330, 0, 200, 100);
 
             scoreLabel.setSize(50, 10);
             scoreLabel.setText("O  X");

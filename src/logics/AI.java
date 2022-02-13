@@ -21,6 +21,8 @@ public class AI {
 
     public String selfPlay(int difficulty) {
 
+        AnalyticAI analyticAI = new AnalyticAI();
+
         // first loop, repeats until every game for every turn is completed
         // second and third loops are listing each cell of the board
         for (int gamesPerCell = 0; gamesPerCell < 150; gamesPerCell++) {
@@ -67,8 +69,15 @@ public class AI {
             }
         }
 
-        // makes a turn in the real board in the cell with the highest victory rating
-        String madeTurn = realTurn();
+
+        String madeTurn = "";
+        if (difficulty != 3) {
+            madeTurn = realTurn(); // makes a turn in the real board in the cell with the highest victory rating
+        }
+        else {
+            //madeTurn =
+            analyticAI.realTurn(gamesRepository); // makes turn according to analysis
+        }
 
         // after all virtual games for one real turn are over, the repository gets cleared
         gamesRepository.clear();
@@ -125,7 +134,8 @@ public class AI {
         int turnNumber = realBoardTurnAmount; // counts turns
 
         String oneGame = (turnNumber + "[" + x + ":" + y + "]T "); // saves a game into a String
-        //Shortages: J: Free choice of the "real" AI; H: Prevent enemy's victory (rAI); V: Victory; L: Lost; P: Prevent turn (enemy AI); F: Free choice (eAI); T: Cell try (rAI)
+        //Shortages: J: Free choice of the "real" AI; H: Prevent enemy's victory (rAI); V: Victory; L: Lost; P: Prevent turn (enemy AI); F: Free choice (eAI); T: Cell try (rAI);
+        // O: One cell remaining (rAI); X: One cell remaining (eAI);
 
         // for me to test the virtual games [commented]
         //PrintBoard.printVirtualBoard(virtualBoard);
@@ -149,11 +159,17 @@ public class AI {
 
                 if (currentTurn == null) {
 
-                    // last: if after the analysis there is no move the AI could do, he just moves randomly
-                    currentTurn = logic.randomTurn(virtualBoard, CellValue.X);
-                    turnType = 'F';
-                    //xTurnCell = gameCounter.randomTurn(virtualBoard, CellValue.X);
+                    //third: AI checks, whether it is only one cell remaining, if yes, it turns there
+                    currentTurn = logic.moveInLastCellRemaining(CellValue.X);
+                    turnType = 'X';
 
+                    if (currentTurn == null) {
+
+                        // last: if after the analysis there is no move the AI could do, he just moves randomly
+                        currentTurn = logic.randomTurn(virtualBoard, CellValue.X);
+                        turnType = 'F';
+                        //xTurnCell = gameCounter.randomTurn(virtualBoard, CellValue.X);
+                    }
                 }
             }
 
@@ -221,10 +237,17 @@ public class AI {
 
                 if (currentTurn == null) {
 
-                    // last: if after the analysis there is no move the AI could do, he just moves randomly
-                    currentTurn = logic.randomTurn(virtualBoard, CellValue.O);
-                    turnType = 'J';
-                    //yTurnCell = gameCounter.randomTurn(virtualBoard, CellValue.O);
+                    //third: AI checks, whether it is only one cell remaining, if yes, it turns there
+                    currentTurn = logic.moveInLastCellRemaining(CellValue.O);
+                    turnType = 'O';
+
+                    if (currentTurn == null) {
+
+                        // last: if after the analysis there is no move the AI could do, he just moves randomly
+                        currentTurn = logic.randomTurn(virtualBoard, CellValue.O);
+                        turnType = 'J';
+                        //yTurnCell = gameCounter.randomTurn(virtualBoard, CellValue.O);
+                    }
                 }
             }
             turnNumber++;
@@ -296,7 +319,6 @@ public class AI {
             for (int yVictoryCounter = 2; yVictoryCounter >= 0; yVictoryCounter--) {
 
                 if (victoryCounter[xVictoryCounter][yVictoryCounter] > bestCell) {
-
                     bestCell = victoryCounter[xVictoryCounter][yVictoryCounter];
 
                     // for me to test [commented]
@@ -313,7 +335,6 @@ public class AI {
             for (int yBestOption = 2; yBestOption >= 0; yBestOption--) {
 
                 if (victoryCounter[xBestOption][yBestOption] == bestCell) {
-
                     Board.realBoard[xBestOption][yBestOption] = CellValue.O;
 
                     // for me to test [commented]
